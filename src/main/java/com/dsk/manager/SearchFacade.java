@@ -52,21 +52,14 @@ public class SearchFacade {
             CompletableFuture<Page<PostVO>> postTask = CompletableFuture.supplyAsync(() -> {
                 PostQueryRequest postQueryRequest = new PostQueryRequest();
                 postQueryRequest.setSearchText(searchText);
-                Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
-                return postVOPage;
+                return postService.listPostVOByPage(postQueryRequest, request);
             });
 
-            CompletableFuture<Page<Picture>> pictureTask = CompletableFuture.supplyAsync(() -> {
-                Page<Picture> picturePage = pictureService.queryPicture(searchText, 1, 10);
-                return picturePage;
-            });
-
-
+            CompletableFuture<Page<Picture>> pictureTask = CompletableFuture.supplyAsync(() -> pictureService.queryPicture(searchText, 1, 10));
             CompletableFuture<Page<UserVO>> userTask = CompletableFuture.supplyAsync(() -> {
                 UserQueryRequest userQueryRequest = new UserQueryRequest();
                 userQueryRequest.setUserName(searchText);
-                Page<UserVO> userVOPage = userService.listUserVobyPage(userQueryRequest);
-                return userVOPage;
+                return userService.listUserVobyPage(userQueryRequest);
             });
 
             CompletableFuture.allOf(postTask, userTask, pictureTask).join();
@@ -75,7 +68,6 @@ public class SearchFacade {
                 Page<PostVO> postVOPage = postTask.get();
                 Page<UserVO> userVOPage = userTask.get();
                 Page<Picture> picturePage = pictureTask.get();
-
                 searchVO.setPostVOList(postVOPage.getRecords());
                 searchVO.setUserVOList(userVOPage.getRecords());
                 searchVO.setPictureList(picturePage.getRecords());

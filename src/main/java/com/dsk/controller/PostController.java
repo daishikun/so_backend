@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.dsk.annotation.AuthCheck;
 import com.dsk.exception.BusinessException;
 import com.dsk.exception.ThrowUtils;
-
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
@@ -143,9 +142,8 @@ public class PostController {
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<PostVO>> listPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
             HttpServletRequest request) {
-        long size = postQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(postQueryRequest.getPageSize() > 20, ErrorCode.PARAMS_ERROR);
         Page<PostVO> postVOPage = postService.listPostVOByPage(postQueryRequest, request);
         return ResultUtils.success(postVOPage);
     }
@@ -176,9 +174,8 @@ public class PostController {
     @PostMapping("/search/page/vo")
     public BaseResponse<Page<PostVO>> searchPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
             HttpServletRequest request) {
-        long size = postQueryRequest.getPageSize();
         // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(postQueryRequest.getPageSize() > 20, ErrorCode.PARAMS_ERROR);
         Page<Post> postPage = postService.searchFromEs(postQueryRequest);
         return ResultUtils.success(postService.getPostVOPage(postPage, request));
     }
@@ -199,9 +196,8 @@ public class PostController {
         // 参数校验
         postService.validPost(post, false);
         User loginUser = userService.getLoginUser(request);
-        long id = postEditRequest.getId();
         // 判断是否存在
-        Post oldPost = postService.getById(id);
+        Post oldPost = postService.getById(postEditRequest.getId());
         ThrowUtils.throwIf(oldPost == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可编辑
         if (!oldPost.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
