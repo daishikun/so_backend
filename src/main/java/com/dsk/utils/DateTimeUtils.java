@@ -53,6 +53,17 @@ public class DateTimeUtils {
     }
 
 
+    /**
+     * 时间字符串-->LocalDateTime时间形式
+     * @param pattern  格式
+     * @param  dateStr  时间字符串
+     * @return localDateTime  时间
+     */
+    public static LocalDateTime parseLocalDateTime(String dateStr, String pattern) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern);
+        return LocalDateTime.parse(dateStr, dateTimeFormatter);
+    }
+
 
     /**
      * SimpleDateFormat形式Date的字符串->Date
